@@ -81,14 +81,13 @@ public class AuthorController{
             @PathVariable("id") Long id,
             @RequestBody AuthorDto incompleteAuthorDto
     ){
-        Patcher<AuthorDto> patcher = new Patcher<>(AuthorDto.class);
+        Patcher<AuthorDto> authorDtoPatcher = new Patcher<>(AuthorDto.class);
         Optional<AuthorEntity> existingAuthor = authorService.findById(id);
 
         return existingAuthor.map(existingAuthorEntity -> {
-
+            AuthorDto authorDto = authorMapper.mapTo(existingAuthorEntity);
             try {
-                AuthorDto authorDto = authorMapper.mapTo(existingAuthorEntity);
-                patcher.authorPatcher(authorDto, incompleteAuthorDto);
+                authorDtoPatcher.patcher(authorDto, incompleteAuthorDto);
                 AuthorEntity updatedAuthorEntity = authorMapper.mapFrom(authorDto);
                 authorService.save(updatedAuthorEntity);
                 return new ResponseEntity<>(authorMapper.mapTo(updatedAuthorEntity), HttpStatus.OK);

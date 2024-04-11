@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    BookEntity createBook(BookEntity bookEntity);
+    BookEntity save(BookEntity bookEntity);
 
     BookEntity modifyBookByIsbn(String isbn, BookEntity bookEntity);
 
@@ -16,5 +16,5 @@ public interface BookService {
 
     void deleteById(String id);
 
-    Optional<BookEntity> getOneBook(String isbn);
+    Optional<BookEntity> findById(String isbn);
 }

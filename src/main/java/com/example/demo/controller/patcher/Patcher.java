@@ -1,6 +1,4 @@
 package com.example.demo.controller.patcher;
-
-
 import java.lang.reflect.Field;
 
 public class Patcher<T> {
@@ -11,7 +9,7 @@ public class Patcher<T> {
         this.c = c;
     }
 
-    public void authorPatcher(T existingIntern, T incompleteIntern) throws IllegalAccessException {
+    public void patcher(T existingIntern, T incompleteIntern) throws IllegalAccessException {
 
         Field[] authorDtoFields = c.getDeclaredFields();
         for(Field f : authorDtoFields){

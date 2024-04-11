@@ -18,7 +18,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookEntity createBook(BookEntity bookEntity) {
+    public BookEntity save(BookEntity bookEntity) {
         return bookRepository.save(bookEntity);
     }
 
@@ -44,7 +44,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<BookEntity> getOneBook(String isbn) {
+    public Optional<BookEntity> findById(String isbn) {
         return bookRepository.findById(isbn);
     }
 

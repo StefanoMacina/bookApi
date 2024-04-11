@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.patcher.Patcher;
+import com.example.demo.domain.DTO.AuthorDto;
 import com.example.demo.domain.DTO.BookDto;
 import com.example.demo.domain.entities.BookEntity;
 import com.example.demo.mappers.Mapper;
@@ -7,6 +9,8 @@ import com.example.demo.services.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,14 +33,14 @@ public class BookController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         BookEntity bookEntity = bookMapper.mapFrom(bookDto);
-        BookEntity savedBookEntity = bookService.createBook(bookEntity);
+        BookEntity savedBookEntity = bookService.save(bookEntity);
 
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity), HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/books/{isbn}")
     public ResponseEntity<BookDto> getOneBook(@PathVariable("isbn") String isbn){
-        Optional<BookEntity> foundBook = bookService.getOneBook(isbn);
+        Optional<BookEntity> foundBook = bookService.findById(isbn);
 
         return foundBook.map(bookEntity -> {
             BookDto bookDto = bookMapper.mapTo(bookEntity);
@@ -72,5 +76,26 @@ public class BookController {
         }
         bookService.deleteById(isbn);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/books/{isbn}")
+    public ResponseEntity<BookDto> patchBook(
+            @PathVariable("isbn") String isbn,
+            @RequestBody BookDto incompleteBook
+    ){
+        Patcher<BookDto> bookDtoPatcher = new Patcher<>(BookDto.class);
+        Optional<BookEntity> existingBook = bookService.findById(isbn);
+
+        return existingBook.map( existingBookEntity -> {
+            BookDto bookDto = bookMapper.mapTo(existingBookEntity);
+            try {
+                bookDtoPatcher.patcher(bookDto,incompleteBook);
+                BookEntity updatedBookEntity = bookMapper.mapFrom(bookDto);
+                bookService.save(updatedBookEntity);
+                return new ResponseEntity<>(bookMapper.mapTo(updatedBookEntity),HttpStatus.OK);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
