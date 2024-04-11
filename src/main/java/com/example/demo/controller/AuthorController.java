@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.patcher.Patcher;
 import com.example.demo.domain.DTO.AuthorDto;
 import com.example.demo.domain.entities.AuthorEntity;
 import com.example.demo.mappers.Mapper;
@@ -28,7 +29,7 @@ public class AuthorController{
     @PostMapping("/authors")
     public AuthorDto createAuthor(@RequestBody AuthorDto authorDto){
         AuthorEntity authorEntity = authorMapper.mapFrom(authorDto);
-        AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
+        AuthorEntity savedAuthorEntity = authorService.save(authorEntity);
         return authorMapper.mapTo(savedAuthorEntity);
     }
 
@@ -56,7 +57,7 @@ public class AuthorController{
     public ResponseEntity<AuthorDto> getOneAuthor(
             @PathVariable("id") Long id
     ){
-           Optional<AuthorEntity> foundAuthor = authorService.getOneAuthor(id);
+           Optional<AuthorEntity> foundAuthor = authorService.findById(id);
 
            return foundAuthor.map(authorEntity -> {
                AuthorDto authorDto = authorMapper.mapTo(authorEntity);
@@ -73,5 +74,28 @@ public class AuthorController{
         }
         authorService.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/authors/{id}")
+    public ResponseEntity<AuthorDto> patchAuthor(
+            @PathVariable("id") Long id,
+            @RequestBody AuthorDto incompleteAuthorDto
+    ){
+        Patcher<AuthorDto> patcher = new Patcher<>(AuthorDto.class);
+        Optional<AuthorEntity> existingAuthor = authorService.findById(id);
+
+        return existingAuthor.map(existingAuthorEntity -> {
+
+            try {
+                AuthorDto authorDto = authorMapper.mapTo(existingAuthorEntity);
+                patcher.authorPatcher(authorDto, incompleteAuthorDto);
+                AuthorEntity updatedAuthorEntity = authorMapper.mapFrom(authorDto);
+                authorService.save(updatedAuthorEntity);
+                return new ResponseEntity<>(authorMapper.mapTo(updatedAuthorEntity), HttpStatus.OK);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

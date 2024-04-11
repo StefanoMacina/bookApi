@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AuthorService {
 
-    AuthorEntity createAuthor(AuthorEntity authorEntity);
+    AuthorEntity save(AuthorEntity authorEntity);
 
     AuthorEntity modifyAuthorById (Long id, AuthorEntity authorEntity);
 
@@ -16,7 +16,7 @@ public interface AuthorService {
 
     boolean existById(Long id);
 
-    Optional<AuthorEntity> getOneAuthor(Long id);
+    Optional<AuthorEntity> findById(Long id);
 
     void deleteById(Long id);
 }
