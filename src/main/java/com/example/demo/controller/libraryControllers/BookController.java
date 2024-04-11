@@ -1,7 +1,6 @@
-package com.example.demo.controller;
+package com.example.demo.controller.libraryControllers;
 
 import com.example.demo.controller.patcher.Patcher;
-import com.example.demo.domain.DTO.AuthorDto;
 import com.example.demo.domain.DTO.BookDto;
 import com.example.demo.domain.entities.BookEntity;
 import com.example.demo.mappers.Mapper;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

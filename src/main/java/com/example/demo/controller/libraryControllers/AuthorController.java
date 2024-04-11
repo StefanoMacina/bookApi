@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.libraryControllers;
 
 import com.example.demo.controller.patcher.Patcher;
 import com.example.demo.domain.DTO.AuthorDto;
