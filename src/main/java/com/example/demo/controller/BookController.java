@@ -6,6 +6,7 @@ import com.example.demo.domain.DTO.BookDto;
 import com.example.demo.domain.entities.BookEntity;
 import com.example.demo.mappers.Mapper;
 import com.example.demo.services.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,11 @@ import java.util.Optional;
 @RequestMapping("/api/v1")
 public class BookController {
 
-    private final BookService bookService;
-    private final Mapper<BookEntity, BookDto> bookMapper;
+    @Autowired
+    BookService bookService;
 
-    public BookController(BookService bookService, Mapper<BookEntity, BookDto> bookMapper) {
-        this.bookService = bookService;
-        this.bookMapper = bookMapper;
-    }
+    @Autowired
+    Mapper<BookEntity, BookDto> bookMapper;
 
     @PostMapping(path = "/books")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
